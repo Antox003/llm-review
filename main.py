@@ -4,18 +4,18 @@ import pandas as pd
 from pypdf import PdfReader
 from openai import OpenAI
 
-# 🔹 API keys
-GEMINI_KEY = "-----"
-OPENAI_KEY = "-----" 
+# API keys
+GEMINI_KEY = "---------"
+OPENAI_KEY = "---------" 
 
-# 🔹 Modelli
+# Modelli
 GEMINI_MODEL = "models/gemini-flash-latest"
 GPT_MODEL = "gpt-5.1"
 
-# 🔹 Endpoint Gemini
+# Endpoint Gemini
 GEMINI_URL = f"https://generativelanguage.googleapis.com/v1beta/{GEMINI_MODEL}:generateContent?key={GEMINI_KEY}"
 
-# 🔹 Client OpenAI
+# Client OpenAI
 gpt_client = OpenAI(api_key=OPENAI_KEY)
 
 
@@ -30,11 +30,13 @@ def prompt_revisore(testo: str) -> str:
     """Prompt comune per tutti i modelli"""
     return f"""
 Sei un revisore scientifico.
-Analizza il seguente testo e dimmi se è accettabile.
-Rispondi in questo formato:
+Analizza il seguente testo e valuta se è accettabile dal punto di vista logico, concettuale e scientifico, ignorando completamente gli errori tipografici (spazi mancanti, accenti, simboli troncati, note †/‡/§ disallineate, ecc.).
+Concentrati esclusivamente su eventuali inconsistenze logiche, errori metodologici, affermazioni non supportate, imprecisioni scientifiche o contraddizioni interne.
+
+Rispondi esclusivamente nel seguente formato:
 
 VERDETTO: ACCEPTED oppure REJECTED
-MOTIVO: breve spiegazione
+MOTIVO: breve spiegazione (massimo 2 righe) centrata sugli aspetti logici/scientifici del testo analizzato.
 
 Testo:
 {testo}
@@ -98,7 +100,7 @@ def main():
             with open(path, "r", encoding="utf-8") as f:
                 testo = f.read()
         else:
-            print(f"🔎 Estraggo testo da PDF: {filename}...")
+            print(f"Estraggo testo da PDF: {filename}...")
             testo = estrai_testo_da_pdf(path)
 
         print(f"Analizzo {filename} con Gemini...")
@@ -116,7 +118,7 @@ def main():
 
     df = pd.DataFrame(risultati)
     df.to_excel("risultati_confronto.xlsx", index=False)
-    print("✅ Analisi completata! File creato: risultati_confronto.xlsx")
+    print("Analisi completata! File creato: risultati_confronto.xlsx")
 
 
 if __name__ == "__main__":
